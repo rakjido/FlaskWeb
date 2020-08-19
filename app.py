@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route("/hello/")
 def hello_flask():
-    return "Hello Flask apps!!!"
+    return "Hello Flask apps???"
 
 @app.route("/profile/<username>")
 def show_user_profile(username):
@@ -26,8 +26,10 @@ def page_not_found(error):
     return '%s' %error
 
 if __name__ == '__main__':
-    # app.run(host='0.0.0.0') #외부에서 접근 가능 
-    app.run(host='0.0.0.0', debug=True) # debug모드 수정하면. 자동으로 reload 된다. 
-
+    #app.run(host='0.0.0.0') #외부에서 접근 가능 
+    with app.test_request_context():
+        print(url_for('show_user_profile', username="Tom Mitchell"))
+        print(url_for('show_user_post', username="Tom Mitchell", post_id=32))
+        print(url_for('show_subpath', subpath='Colony/23/POST'))
 
 # FLASK_DEBUG=1 flask run
