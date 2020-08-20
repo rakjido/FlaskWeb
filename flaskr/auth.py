@@ -8,9 +8,9 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flaskr.db import get_db
 
 # auth라는 이름의 Blueprint 생성. url_prefix를 지정할 수 있다 
-bp = Blueprint('auth', __name__, url_prefix=='/auth')
+bp = Blueprint('auth', __name__, url_prefix ='/auth')
 
-@bp.route('/register', method=('GET','POST'))
+@bp.route('/register', methods = ('GET','POST'))
 def register():
     if request.method == 'POST':
         username = request.form['username']
@@ -22,7 +22,7 @@ def register():
             error = 'Username is required.'
         elif not password:
             error = 'Password is required'
-        elif db.set_execute(    
+        elif db.execute(    
             'SELECT id FROM user WHERE username = ?', (username,)
         ).fetchone() is not None:
             error = 'User {} is already registered.'.format(username)
@@ -32,7 +32,7 @@ def register():
                 'INSERT INTO user (username, password) VALUES (?, ?)',
                 (username, generate_password_hash(password))
             )
-            db.Commit()
+            db.commit()
             return redirect(url_for('auth.login'))
 
         flash(error)
@@ -40,7 +40,7 @@ def register():
     return render_template('auth/register.html')
 
 
-@bp.route('/login', method = ('GET', 'POST'))
+@bp.route('/login', methods = ('GET', 'POST'))
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -48,7 +48,7 @@ def login():
         db = get_db()
         error = None
         user = db.execute(
-            'SELECT * FROM user HWERE username = ?', (username,)
+            'SELECT * FROM user WHERE username = ?', (username,)
         ).fetchone()
 
         if user is None:
