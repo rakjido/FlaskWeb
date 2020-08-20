@@ -3,6 +3,7 @@ import os
 from flask import Flask
 
 from . import db
+from . import auth
 
 def create_app(test_config=None):
     # create and configure the app
@@ -35,6 +36,7 @@ def create_app(test_config=None):
     
 
     db.init_app(app)
+    app.register_blueprint(auth.bp)
 
     return app    
 
@@ -46,3 +48,5 @@ def create_app(test_config=None):
 # flask init-db
 
 # https://flask.palletsprojects.com/en/1.1.x/tutorial/database/
+
+# https://flask.palletsprojects.com/en/1.1.x/tutorial/views/
