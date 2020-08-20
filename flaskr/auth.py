@@ -65,29 +65,29 @@ def login():
     
     return render_template('auth/login.html')
 
-    @bp.before_app_request
-    def load_logged_in_user():
-        user_id = session.get('user_id')
-            
-        if user_id is None:
-            g.user = None
-        else:
-            g.user = get_db().execute( 
-                'SELECT * FROM user WHERE id = ?', (user_id,)
-            ).fetchone()
-
-    
-    @bp.route('/logout')
-    def logout():
-        session.clear()
-        return redirect(url_for('index'))
-
-    def login_required(view):
-        # 해당 뷰를 검사해서 로그인이 되어 있지 않으면 로그인 페이지로 redirect한다. Spring에서의 AOP와 비슷한 개념 
-        @functions.wrap(view)
-        def wrapped_view(**kwargs):
-            if g.user is None:
-                return redirect(url_for('auth.login'))
-            
-            return view(**kwargs)
+@bp.before_app_request
+def load_logged_in_user():
+    user_id = session.get('user_id')
         
+    if user_id is None:
+        g.user = None
+    else:
+        g.user = get_db().execute( 
+            'SELECT * FROM user WHERE id = ?', (user_id,)
+        ).fetchone()
+
+
+@bp.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
+
+def login_required(view):
+    # 해당 뷰를 검사해서 로그인이 되어 있지 않으면 로그인 페이지로 redirect한다. Spring에서의 AOP와 비슷한 개념 
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for('auth.login'))
+        
+        return view(**kwargs)
+    return wrapped_view
